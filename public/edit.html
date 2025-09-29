@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Site</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button[type="button"] {
+            background-color: #f44336;
+            color: white;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Site</h1>
+        <form id="editForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="url">URL:</label>
+            <input type="url" id="url" required>
+
+            <label for="image">Image URL:</label>
+            <input type="text" id="image" required>
+
+            <label for="score">Score:</label>
+            <input type="number" id="score" min="0" max="10" required>
+
+            <div class="buttons">
+                <button type="submit">Save</button>
+                <button type="button" onclick="window.location.href='index.html'">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const apiURL = 'http://localhost:3000/sites';
+        const urlParams = new URLSearchParams(window.location.search);
+        const siteId = urlParams.get('id');
+
+        async function loadSite() {
+            const res = await fetch(`${apiURL}/${siteId}`);
+            const site = await res.json();
+            document.getElementById('name').value = site.name;
+            document.getElementById('url').value = site.url;
+            document.getElementById('image').value = site.image;
+            document.getElementById('score').value = site.score;
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const updatedSite = {
+                name: document.getElementById('name').value,
+                url: document.getElementById('url').value,
+                image: document.getElementById('image').value,
+                score: Number(document.getElementById('score').value)
+            };
+            await fetch(`${apiURL}/${siteId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedSite)
+            });
+            window.location.href = 'index.html';
+        });
+
+        loadSite();
+    </script>
+</body>
+</html>
