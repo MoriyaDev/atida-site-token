@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const {config } = require('../config/secret');
+const { TOKEN_SECRET } = require("../config/secret");
 
 exports.auth = async (req, res, next) => {
     let token = req.header('x-api-key');
@@ -12,7 +14,7 @@ exports.auth = async (req, res, next) => {
     token = token.replace('Bearer ', '');
     
     try {
-        let tokenData = jwt.verify(token, 'mormor_key');
+let tokenData = jwt.verify(token, TOKEN_SECRET);
         req.tokenData = tokenData;
         next();
     } catch (error) {
